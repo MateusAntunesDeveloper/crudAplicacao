@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Conta - TechStoraged</title>
+    <link rel="stylesheet" href="style2.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos adicionais para o modal de pagamento */
+        .payment-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .payment-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: modalSlide 0.3s ease;
+        }
+
+        @keyframes modalSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .payment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .payment-header h3 {
+            margin: 0;
+            color: #2c3e50;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .card-icons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .card-icon {
+            font-size: 32px;
+            color: #ccc;
+        }
+
+        .card-icon.active {
+            color: #3498db;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .submit-payment {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .submit-payment:hover {
+            transform: translateY(-2px);
+        }
+
+        .submit-payment:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .input-error {
+            border-color: #e74c3c !important;
+        }
+
+        .input-success {
+            border-color: #2ecc71 !important;
+        }
+
+        .success-message {
+            background: #2ecc71;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .payment-option {
+            background: #f8f9fa;
+            border: 2px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 20px 0;
+        }
+
+        .payment-option:hover {
+            border-color: #667eea;
+            background: #fff;
+        }
+
+        .payment-option.selected {
+            border-color: #667eea;
+            background: #f0f3ff;
+        }
+
+        .payment-option-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .payment-option-header i {
+            font-size: 24px;
+            color: #667eea;
+        }
+
+        .card-preview {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .card-number-preview {
+            font-family: 'Courier New', monospace;
+            font-size: 20px;
+            letter-spacing: 2px;
+            margin: 15px 0;
+        }
+
+        .card-details-preview {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <h1><i class="fas fa-desktop"></i> TechStoraged</h1>
+                <p class="tagline">Loja de Periféricos</p>
+            </div>
+            <div class="user-info">
+                <div class="user-greeting">
+                    <i class="fas fa-user-circle"></i>
+                    <div>
+                        <p class="welcome" id="user-name">Bem-vindo</p>
+                        <p id="user-email"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <a href="page.html" class="btn" style="text-align: center; padding: 10px; background-color: #2c3e50; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; margin: 20px auto; display: block; width: 200px;">
+        <i class="fas fa-store"></i> Ir para a Loja
+    </a>
+
+    <main class="main-content">
+        <div class="container">
+            <h2><i class="fas fa-user-cog"></i> Configurações da Conta</h2>
+
+            <div class="account-settings" style="display: flex; flex-direction: column; gap: 15px; max-width: 400px; margin: 20px auto;">
+                <!-- Botão para mostrar formulário -->
+                <button id="changeAccountBtn">Mudar Conta</button>
+
+                <!-- Formulário escondido inicialmente -->
+                <div id="accountForm" style="display: none; flex-direction: column; gap: 10px;">
+                    <label>
+                        Novo E-mail:
+                        <input type="email" id="newEmail" placeholder="Digite novo e-mail">
+                    </label>
+                    <label>
+                        Nova Senha:
+                        <input type="password" id="newPassword" placeholder="Digite nova senha">
+                    </label>
+                    <button id="saveBtn">Salvar Alterações</button>
+                </div>
+
+                <!-- Opção de Pagamento -->
+                <div class="payment-option" id="paymentOption">
+                    <div class="payment-option-header">
+                        <i class="fas fa-credit-card"></i>
+                        <div>
+                            <h3>Forma de Pagamento</h3>
+                            <p>Configurar cartão de crédito</p>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="cadastro.html" class="danger" style="color: red; text-decoration: none; font-weight: bold;">
+                    <i class="fas fa-trash"></i> Excluir Conta
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal de Pagamento -->
+    <div class="payment-modal" id="paymentModal">
+        <div class="payment-content">
+            <div class="payment-header">
+                <h3><i class="fas fa-credit-card"></i> Adicionar Cartão de Crédito</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+
+            <div class="card-icons">
+                <i class="fab fa-cc-visa card-icon" id="visaIcon"></i>
+                <i class="fab fa-cc-mastercard card-icon" id="mastercardIcon"></i>
+                <i class="fab fa-cc-amex card-icon" id="amexIcon"></i>
+                <i class="fab fa-cc-discover card-icon" id="discoverIcon"></i>
+            </div>
+
+            <!-- Pré-visualização do cartão -->
+            <div class="card-preview" id="cardPreview">
+                <div class="card-icons">
+                    <i class="fab fa-cc-visa"></i>
+                </div>
+                <div class="card-number-preview" id="cardNumberPreview">**** **** **** ****</div>
+                <div class="card-details-preview">
+                    <div id="cardNamePreview">NOME NO CARTAO</div>
+                    <div id="cardExpiryPreview">MM/AA</div>
+                </div>
+            </div>
+
+            <form id="paymentForm">
+                <div class="form-group">
+                    <label for="cardNumber">Número do Cartão</label>
+                    <input type="text" id="cardNumber" maxlength="19" placeholder="1234 5678 9012 3456">
+                    <div class="error-message" id="cardNumberError">Número de cartão inválido</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="cardName">Nome no Cartão</label>
+                    <input type="text" id="cardName" placeholder="Como aparece no cartão">
+                    <div class="error-message" id="cardNameError">Nome é obrigatório</div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cardExpiry">Validade (MM/AA)</label>
+                        <input type="text" id="cardExpiry" maxlength="5" placeholder="MM/AA">
+                        <div class="error-message" id="cardExpiryError">Data inválida ou expirada</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="cardCvv">CVV</label>
+                        <input type="password" id="cardCvv" maxlength="4" placeholder="123">
+                        <div class="error-message" id="cardCvvError">CVV inválido</div>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-payment" id="submitPayment">
+                    <i class="fas fa-lock"></i> Salvar Cartão
+                </button>
+            </form>
+
+            <div class="success-message" id="successMessage">
+                <i class="fas fa-check-circle"></i> Cartão salvo com sucesso!
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 TechStoraged. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Pegar dados do usuário do localStorage
+        const userName = localStorage.getItem('userName') || 'Usuário';
+        const userEmail = localStorage.getItem('userEmail') || '';
+
+        document.getElementById('user-name').textContent = `Bem-vindo, ${userName}`;
+        document.getElementById('user-email').textContent = userEmail;
+
+        // Configurações da conta
+        const changeAccountBtn = document.getElementById('changeAccountBtn');
+        const accountForm = document.getElementById('accountForm');
+
+        changeAccountBtn.addEventListener('click', () => {
+            accountForm.style.display = 'flex';
+            changeAccountBtn.style.display = 'none';
+        });
+
+        document.getElementById('saveBtn').addEventListener('click', () => {
+            const newEmail = document.getElementById('newEmail').value.trim();
+            const newPassword = document.getElementById('newPassword').value.trim();
+
+            if(newEmail) {
+                localStorage.setItem('userEmail', newEmail);
+                document.getElementById('user-email').textContent = newEmail;
+            }
+
+            if(newPassword) {
+                localStorage.setItem('userPassword', newPassword);
+            }
+
+            alert('Alterações salvas com sucesso!');
+            accountForm.style.display = 'none';
+            changeAccountBtn.style.display = 'block';
+        });
+
+        // Sistema de Pagamento
+        const paymentOption = document.getElementById('paymentOption');
+        const paymentModal = document.getElementById('paymentModal');
+        const closeModal = document.querySelector('.close-modal');
+        const paymentForm = document.getElementById('paymentForm');
+        const cardPreview = document.getElementById('cardPreview');
+
+        // Abrir modal de pagamento
+        paymentOption.addEventListener('click', () => {
+            paymentModal.style.display = 'flex';
+            paymentOption.classList.add('selected');
+            
+            // Carregar dados salvos se existirem
+            loadSavedCard();
+        });
+
+        // Fechar modal
+        closeModal.addEventListener('click', () => {
+            paymentModal.style.display = 'none';
+            paymentOption.classList.remove('selected');
+            resetForm();
+        });
+
+        // Fechar modal ao clicar fora
+        paymentModal.addEventListener('click', (e) => {
+            if (e.target === paymentModal) {
+                paymentModal.style.display = 'none';
+                paymentOption.classList.remove('selected');
+                resetForm();
+            }
+        });
+
+        // Funções de validação de cartão
+        function validateCardNumber(cardNumber) {
+            // Remover espaços
+            const cleanNumber = cardNumber.replace(/\s/g, '');
+            
+            // Verificar se contém apenas números
+            if (!/^\d+$/.test(cleanNumber)) {
+                return { valid: false, type: 'invalid' };
+            }
+            
+            // Algoritmo de Luhn
+            let sum = 0;
+            let isEven = false;
+            
+            for (let i = cleanNumber.length - 1; i >= 0; i--) {
+                let digit = parseInt(cleanNumber.charAt(i));
+                
+                if (isEven) {
+                    digit *= 2;
+                    if (digit > 9) {
+                        digit -= 9;
+                    }
+                }
+                
+                sum += digit;
+                isEven = !isEven;
+            }
+            
+            const isValid = (sum % 10) === 0;
+            
+            // Identificar bandeira
+            let cardType = 'unknown';
+            if (/^4/.test(cleanNumber)) {
+                cardType = 'visa';
+            } else if (/^5[1-5]/.test(cleanNumber)) {
+                cardType = 'mastercard';
+            } else if (/^3[47]/.test(cleanNumber)) {
+                cardType = 'amex';
+            } else if (/^6(?:011|5)/.test(cleanNumber)) {
+                cardType = 'discover';
+            }
+            
+            return { valid: isValid, type: cardType };
+        }
+
+        function formatCardNumber(value) {
+            // Remover tudo exceto números
+            const numbers = value.replace(/\D/g, '');
+            
+            // Formatar em grupos de 4
+            const groups = numbers.match(/.{1,4}/g);
+            return groups ? groups.join(' ') : numbers;
+        }
+
+        function validateExpiryDate(expiry) {
+            if (!/^\d{2}\/\d{2}$/.test(expiry)) {
+                return false;
+            }
+            
+            const [month, year] = expiry.split('/').map(Number);
+            const now = new Date();
+            const currentYear = now.getFullYear() % 100;
+            const currentMonth = now.getMonth() + 1;
+            
+            if (month < 1 || month > 12) {
+                return false;
+            }
+            
+            if (year < currentYear) {
+                return false;
+            }
+            
+            if (year === currentYear && month < currentMonth) {
+                return false;
+            }
+            
+            return true;
+        }
+
+        function validateCVV(cvv, cardType) {
+            if (!/^\d+$/.test(cvv)) {
+                return false;
+            }
+            
+            if (cardType === 'amex') {
+                return cvv.length === 4;
+            } else {
+                return cvv.length === 3;
+            }
+        }
+
+        // Elementos do formulário
+        const cardNumberInput = document.getElementById('cardNumber');
+        const cardNameInput = document.getElementById('cardName');
+        const cardExpiryInput = document.getElementById('cardExpiry');
+        const cardCvvInput = document.getElementById('cardCvv');
+        const submitPaymentBtn = document.getElementById('submitPayment');
+
+        // Atualizar pré-visualização em tempo real
+        cardNumberInput.addEventListener('input', (e) => {
+            // Formatar número
+            const formatted = formatCardNumber(e.target.value);
+            e.target.value = formatted;
+            
+            // Atualizar pré-visualização
+            document.getElementById('cardNumberPreview').textContent = formatted || '**** **** **** ****';
+            
+            // Validar e mostrar bandeira
+            const validation = validateCardNumber(formatted);
+            updateCardIcons(validation.type);
+            
+            // Mostrar pré-visualização
+            cardPreview.style.display = 'block';
+            
+            // Validar input
+            validateInput(cardNumberInput, validation.valid, 'cardNumberError');
+        });
+
+        cardNameInput.addEventListener('input', (e) => {
+            const name = e.target.value.toUpperCase();
+            document.getElementById('cardNamePreview').textContent = name || 'NOME NO CARTAO';
+            validateInput(cardNameInput, name.length >= 3, 'cardNameError');
+        });
+
+        cardExpiryInput.addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            
+            if (value.length >= 2) {
+                value = value.slice(0, 2) + '/' + value.slice(2, 4);
+            }
+            
+            e.target.value = value;
+            
+            if (value.length === 5) {
+                document.getElementById('cardExpiryPreview').textContent = value;
+                validateInput(cardExpiryInput, validateExpiryDate(value), 'cardExpiryError');
+            } else {
+                document.getElementById('cardExpiryPreview').textContent = 'MM/AA';
+            }
+        });
+
+        cardCvvInput.addEventListener('input', (e) => {
+            const value = e.target.value.replace(/\D/g, '');
+            e.target.value = value;
+            
+            // Determinar bandeira para validar CVV
+            const cardNumber = cardNumberInput.value.replace(/\s/g, '');
+            const cardType = getCardType(cardNumber);
+            const isValid = validateCVV(value, cardType);
+            
+            validateInput(cardCvvInput, isValid, 'cardCvvError');
+        });
+
+        function getCardType(cardNumber) {
+            if (/^4/.test(cardNumber)) return 'visa';
+            if (/^5[1-5]/.test(cardNumber)) return 'mastercard';
+            if (/^3[47]/.test(cardNumber)) return 'amex';
+            if (/^6(?:011|5)/.test(cardNumber)) return 'discover';
+            return 'unknown';
+        }
+
+        function updateCardIcons(cardType) {
+            // Reset todos os ícones
+            document.querySelectorAll('.card-icon').forEach(icon => {
+                icon.classList.remove('active');
+            });
+            
+            // Ativar ícone correspondente
+            switch(cardType) {
+                case 'visa':
+                    document.getElementById('visaIcon').classList.add('active');
+                    break;
+                case 'mastercard':
+                    document.getElementById('mastercardIcon').classList.add('active');
+                    break;
+                case 'amex':
+                    document.getElementById('amexIcon').classList.add('active');
+                    break;
+                case 'discover':
+                    document.getElementById('discoverIcon').classList.add('active');
+                    break;
+            }
+        }
+
+        function validateInput(input, isValid, errorId) {
+            const errorElement = document.getElementById(errorId);
+            
+            if (isValid) {
+                input.classList.remove('input-error');
+                input.classList.add('input-success');
+                errorElement.style.display = 'none';
+            } else {
+                input.classList.remove('input-success');
+                input.classList.add('input-error');
+                errorElement.style.display = 'block';
+            }
+            
+            updateSubmitButton();
+        }
+
+        function updateSubmitButton() {
+            const cardNumberValid = validateCardNumber(cardNumberInput.value).valid;
+            const cardNameValid = cardNameInput.value.length >= 3;
+            const expiryValid = validateExpiryDate(cardExpiryInput.value);
+            
+            // Validar CVV baseado na bandeira
+            const cardNumber = cardNumberInput.value.replace(/\s/g, '');
+            const cardType = getCardType(cardNumber);
+            const cvvValid = validateCVV(cardCvvInput.value, cardType);
+            
+            const allValid = cardNumberValid && cardNameValid && expiryValid && cvvValid;
+            
+            submitPaymentBtn.disabled = !allValid;
+        }
+
+        function resetForm() {
+            cardNumberInput.value = '';
+            cardNameInput.value = '';
+            cardExpiryInput.value = '';
+            cardCvvInput.value = '';
+            
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.style.display = 'none';
+            });
+            
+            document.querySelectorAll('input').forEach(input => {
+                input.classList.remove('input-error', 'input-success');
+            });
+            
+            cardPreview.style.display = 'none';
+            document.getElementById('successMessage').style.display = 'none';
+            submitPaymentBtn.disabled = true;
+            
+            // Reset ícones
+            document.querySelectorAll('.card-icon').forEach(icon => {
+                icon.classList.remove('active');
+            });
+        }
+
+        function loadSavedCard() {
+            const savedCard = localStorage.getItem('userCard');
+            if (savedCard) {
+                try {
+                    const card = JSON.parse(savedCard);
+                    cardNumberInput.value = formatCardNumber(card.number);
+                    cardNameInput.value = card.name;
+                    cardExpiryInput.value = card.expiry;
+                    
+                    // Atualizar pré-visualização
+                    document.getElementById('cardNumberPreview').textContent = formatCardNumber(card.number);
+                    document.getElementById('cardNamePreview').textContent = card.name.toUpperCase();
+                    document.getElementById('cardExpiryPreview').textContent = card.expiry;
+                    
+                    // Validar bandeira
+                    const validation = validateCardNumber(card.number);
+                    updateCardIcons(validation.type);
+                    
+                    cardPreview.style.display = 'block';
+                    
+                    // Validar inputs
+                    validateInput(cardNumberInput, validation.valid, 'cardNumberError');
+                    validateInput(cardNameInput, card.name.length >= 3, 'cardNameError');
+                    validateInput(cardExpiryInput, validateExpiryDate(card.expiry), 'cardExpiryError');
+                    
+                } catch (e) {
+                    console.error('Erro ao carregar cartão salvo:', e);
+                }
+            }
+        }
+
+        // Submeter formulário de pagamento
+        paymentForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Coletar dados
+            const cardData = {
+                number: cardNumberInput.value.replace(/\s/g, ''),
+                name: cardNameInput.value,
+                expiry: cardExpiryInput.value,
+                type: getCardType(cardNumberInput.value.replace(/\s/g, ''))
+            };
+            
+            // Salvar no localStorage
+            localStorage.setItem('userCard', JSON.stringify(cardData));
+            
+            // Mostrar mensagem de sucesso
+            document.getElementById('successMessage').style.display = 'block';
+            
+            // Atualizar botão de pagamento na interface
+            paymentOption.innerHTML = `
+                <div class="payment-option-header">
+                    <i class="fas fa-check-circle" style="color: #2ecc71;"></i>
+                    <div>
+                        <h3>Cartão Cadastrado</h3>
+                        <p>${cardData.type.toUpperCase()} •••• ${cardData.number.slice(-4)}</p>
+                    </div>
+                </div>
+            `;
+            
+            // Fechar modal após 2 segundos
+            setTimeout(() => {
+                paymentModal.style.display = 'none';
+                resetForm();
+            }, 2000);
+        });
+
+        // Inicializar
+        updateSubmitButton();
+    </script>
+</body>
+</html>

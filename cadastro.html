@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechStoraged - Cadastro</title>
+    <link rel="stylesheet" href="style.css">
+     <script src="https://www.google.com/recaptcha/api.js?render=6LcvXCEsAAAAAD8UP8FtA29Anwpeq7AhiVWZQ_fQ"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="login-container">
+            <div class="brand-section">
+                <h1 class="brand-name">TechStoraged</h1>
+                <p class="brand-tagline">Junte-se à nossa comunidade de Tecnologia</p>
+            </div>
+            
+            <form class="login-form" id="cadastroForm">
+                <h2>Crie sua conta</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nome">Nome</label>
+                        <input 
+                            type="text" 
+                            id="nome" 
+                            placeholder="Seu nome"
+                            required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="sobrenome">Sobrenome</label>
+                        <input 
+                            type="text" 
+                            id="sobrenome" 
+                            placeholder="Seu sobrenome"
+                            required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email-cadastro">E-mail</label>
+                    <input 
+                        type="email" 
+                        id="email-cadastro" 
+                        placeholder="seu@email.com"
+                        required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="senha">Senha</label>
+                        <input 
+                            type="password" 
+                            id="senha" 
+                            placeholder="Mínimo 8 caracteres"
+                            required>
+                        <div class="password-strength">
+                            <div class="strength-bar"></div>
+                            <span class="strength-text">Força da senha: fraca</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirmar-senha">Confirmar Senha</label>
+                        <input 
+                            type="password" 
+                            id="confirmar-senha" 
+                            placeholder="Digite novamente"
+                            required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="telefone">Telefone (Opcional)</label>
+                    <input 
+                        type="tel" 
+                        id="telefone" 
+                        placeholder="(11) 99999-9999">
+                </div>
+                
+                <div class="form-group">
+                    <label for="data-nascimento">Data de Nascimento</label>
+                    <input 
+                        type="date" 
+                        id="data-nascimento"
+                        required>
+                </div>
+                
+                <div class="form-options">
+                    <label class="terms-check">
+                        <input type="checkbox" id="termos" required>
+                        <span>Eu li e aceito os <a href="termos.html" target="_blank">Termos de Uso</a> e <a href="privacidade.html" target="_blank">Política de Privacidade</a></span>
+                    </label>
+                    
+                    <label class="newsletter-check">
+                        <input type="checkbox" id="newsletter" checked>
+                        <span>Desejo receber ofertas exclusivas e novidades por e-mail</span>
+                    </label>
+                </div>
+                
+                <button type="submit" class="login-btn">
+                    Criar Conta
+                </button>
+                
+                <div class="divider">
+                    <span>ou cadastre-se com</span>
+                </div>
+                
+                <button type="button" class="social-btn google-btn">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE2LjUxIDkuMjA0NTVWOS4wOTU0NUg5Vi4wOTU0NTZIMTYuNTFDMTcuODcgMi4wNDU0NSA5IDkuMjA0NTUgOSA5LjIwNDU1WiIgZmlsbD0iIzQyODVGMyIvPgo8cGF0aCBkPSJNMSAyLjU0NTQ1QzIuMDkgMS4wOTU0NSAzLjY4IDAuMDk1NDU2IDUuNSAwLjA5NTQ1NkM3LjgyIDAuMDk1NDU2IDkuNzMgMS4zNDU0NSAxMC43NSAzLjA5NTQ1TDEzLjI1IDAuNTk1NDU2QzExLjU5IC0xLjUwNDU1IDguNzIgLTIuOTA0NTUgNS41IC0yLjkwNDU1QzIuMzggLTIuOTA0NTUgLTAuMzkgLTEuNjA0NTUgMSAyLjU0NTQ1WiIgZmlsbD0iIzM0QTgzOCIvPgo8cGF0aCBkPSJNNS41IDE4LjA5NTRDMy42OCAxOC4wOTU0IDIuMDkgMTcuMDk1NCAxIDE1LjY0NTRDMi4zOSAxMy4xOTU0IDUuNSAxMS4wOTU0IDUuNSAxMS4wOTU0QzYuNSAxMi4wOTU0IDguMTggMTMuNTk1NCA4LjE4IDEzLjU5NTRDMTEuMDkgMTEuMDk1NCAxMy4yNSAxMC4wOTU0IDEzLjI1IDEwLjA5NTRDMTMuMjUgMTEuMDk1NCAxMy4I1IDEzLjA5NTQgMTMuMjUgMTQuMDk1NEMxMy4I1IDE2LjA5NTQgMTEuNTkgMTguMDk1NCA1LjUgMTguMDk1NFoiIGZpbGw9IiNGQkJDMDAiLz4KPHBhdGggZD0iTTE2IDE1LjA5NTRDMTYgMTcuMDk1NCAxNC4zNCAxOC4wOTU0IDkuMjUgMTguMDk1NEM0LjE2IDE4LjA5NTQgMS41IDE3LjA5NTQgMS41IDE1LjA5NTQDMS41IDEzLjA5NTQgMy4xNiAxMi4wOTU0IDguMjUgMTIuMDk1NEMxMy4zNCAxMi4wOTU0IDE2IDEzLjA5NTQgMTYgMTUuMDk1NFoiIGZpbGw9IiMzNEE4MzgiLz4KPC9zdmc+Cg==" alt="Google">
+                    Cadastrar com Google
+                </button>
+                
+                <p class="login-link">
+                    Já tem uma conta? <a href="index.html">Faça login</a>
+                </p>
+            </form>
+            
+        </div>
+        
+        <div class="hero-section">
+            <div class="hero-content">
+                <h2>Vantagens de se cadastrar</h2>
+                <p>Faça parte da maior comunidade de tecnologia e periféricos gamers focado em performace, e aproveite benefícios exclusivos.</p>
+                <div class="features">
+                    <div class="feature">
+                    </div>
+                    <div class="feature">
+                        <span>🚚</span>
+                        <span>Frete grátis em todas as compras</span>
+                    </div>
+                    <div class="feature">
+                        <span>⭐</span>
+                        <span>Programa de fidelidade com recompensas</span>
+                    </div>
+                    <div class="feature">
+                        <span>🎉</span>
+                        <span>Acesso antecipado a lançamentos</span>
+                    </div>
+                    <div class="feature">
+                        <span>📦</span>
+                        <span>Devolução gratuita por 30 dias</span>
+                    </div>
+                    <div class="feature">
+                        <span>💎</span>
+                        <span>Conteúdo exclusivo sobre tendências</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+       <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+    (function(){
+        emailjs.init("U4YsBQw1w9fYHGgnL"); 
+    })();
+</script>
+<script src="api.js"></script>
+
+</body>
+</html>
